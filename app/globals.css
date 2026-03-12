@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f7f3ee;
+  --foreground: #111111;
+}
+
+html,
+body {
+  @apply min-h-full bg-[var(--background)] text-[var(--foreground)] antialiased;
+}
+
+body {
+  @apply font-sans;
+}
+
+::selection {
+  @apply bg-accent text-white;
+}
+
+.luxury-container {
+  @apply container mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.luxury-gradient {
+  background: radial-gradient(circle at top left, #fdf7f0 0, #f7f3ee 40%, #e6dbcf 100%);
+}
+
+.card-soft {
+  @apply bg-card shadow-soft rounded-3xl border border-border;
+}
+
