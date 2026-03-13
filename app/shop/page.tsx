@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { Suspense, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ProductGrid } from "@/components/product-grid";
 import { products, categories, type Category } from "@/data/products";
@@ -13,7 +13,7 @@ const sortOptions = [
   { id: "popularity", label: "Most Popular" }
 ];
 
-export default function ShopPage() {
+function ShopContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -30,9 +30,11 @@ export default function ShopPage() {
 
   const filtered = useMemo(() => {
     let list = products;
+
     if (activeCategory) {
       list = list.filter((p) => p.category === activeCategory);
     }
+
     if (query) {
       list = list.filter(
         (p) =>
@@ -40,6 +42,7 @@ export default function ShopPage() {
           p.description.toLowerCase().includes(query)
       );
     }
+
     switch (sort) {
       case "price-asc":
         list = [...list].sort((a, b) => a.price - b.price);
@@ -53,6 +56,7 @@ export default function ShopPage() {
       default:
         list = [...list].sort((a, b) => Number(b.featured) - Number(a.featured));
     }
+
     return list;
   }, [activeCategory, query, sort]);
 
@@ -60,6 +64,7 @@ export default function ShopPage() {
     <div className="luxury-container space-y-8 py-10">
       <BackButton />
       <div className="h-px w-full bg-border/70" />
+
       <header className="space-y-3">
         <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
           Collection
@@ -85,6 +90,7 @@ export default function ShopPage() {
           >
             All
           </button>
+
           {categories.map((c) => (
             <button
               key={c.id}
@@ -104,6 +110,7 @@ export default function ShopPage() {
 
         <div className="flex items-center gap-3 text-xs">
           <span className="text-muted-foreground">Sort</span>
+
           <select
             value={sort}
             onChange={(e) => setParam("sort", e.target.value)}
@@ -122,9 +129,17 @@ export default function ShopPage() {
         <p className="text-xs text-muted-foreground">
           Showing {filtered.length} piece{filtered.length === 1 ? "" : "s"}
         </p>
+
         <ProductGrid products={filtered} />
       </section>
     </div>
   );
 }
 
+export default function ShopPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center">Loading...</div>}>
+      <ShopContent />
+    </Suspense>
+  );
+}
